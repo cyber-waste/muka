@@ -7,15 +7,15 @@ String.metaClass.read = {
 }
 
 
-Set terms = []
+def terms = [] as Set
 (1..10).each {
     def words = "text-${it}.txt"
         .read()
         .split()
-        .collect() {
+        .collect {
             it.toLowerCase().replaceAll('\\W', '').replaceAll('\\d', '')
         }
-        .grep() {
+        .grep {
             !it.isEmpty()
         }
 
