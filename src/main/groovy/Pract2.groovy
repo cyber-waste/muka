@@ -2,37 +2,15 @@
  * @author yaroslav.yermilov
  */
 
-String.metaClass.read = {
-    getClass().getResourceAsStream(delegate).text
-}
+def index = new Index()
+index.load((1..10).collect { "text-${it}.txt" })
 
+println index.terms.sort()
 
-def terms = [:]
-(1..10).each { documentIndex ->
-    "text-${documentIndex}.txt"
-        .read()
-        .split()
-        .collect {
-            it.toLowerCase().replaceAll('\\W', '').replaceAll('\\d', '')
-        }
-        .grep {
-            !it.isEmpty()
-        }
-        .each { term ->
-            if (terms.containsKey(term)) {
-                terms."${term}" << documentIndex
-            } else {
-                terms."${term}" = [ documentIndex ] as Set
-            }
-        }
-}
-
-println terms.sort()
-
-terms.sort().each { term ->
+index.terms.sort().each { term ->
     print "${term.key}".center(20)
-    (1..10).each { documentIndex ->
-        if (term.value.contains(documentIndex)) {
+    (1..10).collect { "text-${it}.txt" }.each { document ->
+        if (term.value.contains(document)) {
             print '1'
         } else {
             print '0'
