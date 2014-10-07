@@ -11,25 +11,31 @@ class Index {
 
     def terms = [:]
     def documents = []
+    def ngram = 1
 
     void load() {
         documents = documents.sort()
 
         documents.each { document ->
-            document
-                .read()
-                .split()
-                .collect {
-                    it.toLowerCase().replaceAll('\\W', '').replaceAll('\\d', '')
-                }
-                .grep {
-                    !it.isEmpty()
-                }
-                .each { term ->
-                    if (terms.containsKey(term)) {
-                        terms[term] << document
-                    } else {
-                        terms[term] = [ document ] as Set
+            def tokens = document
+                            .read()
+                            .split()
+                            .collect {
+                                it.toLowerCase().replaceAll('\\W', '').replaceAll('\\d', '')
+                            }
+                            .grep {
+                                !it.isEmpty()
+                            }
+
+            tokens
+                .eachWithIndex { term, index ->
+                    if (index >= ngram) {
+                        def nterm = (ngram-1..0).collect { delta -> tokens[index - delta] }.join(' ')
+                        if (terms.containsKey(nterm)) {
+                            terms[nterm] << document
+                        } else {
+                            terms[nterm] = [ document ] as Set
+                        }
                     }
                 }
         }
