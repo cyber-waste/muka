@@ -1,3 +1,5 @@
+import com.github.cyberwaste.muka.Index
+
 /**
  * @author yaroslav.yermilov
  */

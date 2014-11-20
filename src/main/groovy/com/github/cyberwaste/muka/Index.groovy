@@ -1,3 +1,4 @@
+package com.github.cyberwaste.muka
 /**
  * @author yaroslav.yermilov
  */
