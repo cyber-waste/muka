@@ -6,7 +6,7 @@ class CoordinatedIndex {
 
     static {
         String.metaClass.read = {
-            getClass().getResourceAsStream(delegate).text
+            getClass().getResourceAsStream("/${delegate}").text
         }
     }
 
