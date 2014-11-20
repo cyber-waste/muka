@@ -10,6 +10,8 @@ dependencies {
 
     compile group: 'commons-io', name: 'commons-io', version: '2.4'
     compile group: 'org.codehaus.groovy.modules.http-builder', name: 'http-builder', version: '0.7'
+    compile group: 'org.apache.hadoop', name: 'hadoop-common', version: '2.5.2'
+    compile group: 'org.apache.hadoop', name: 'hadoop-core', version: '1.2.1'
 }
 
 apply plugin: 'groovy'
