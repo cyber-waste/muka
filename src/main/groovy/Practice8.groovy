@@ -22,7 +22,7 @@ clustersCount.times {
 
 books.each { book ->
     def nearestCluster = clusters.min { cluster ->
-        distance(book, cluster[0])
+        book.distanceTo(cluster[0])
     }
     nearestCluster << book
 }
@@ -57,10 +57,35 @@ List getBooksPaths(int count) {
 }
 
 class Book {
-    
+
     String path
+    Map bagOfWords
 
     static Book loadFrom(String path) {
         return new Book(path: path)
+    }
+
+    double distanceTo(Book other) {
+        def thisSize = 0, otherSize = 0, scalar = 0
+
+        this.bagOfWords.each { String word, int count ->
+            if (!other.bagOfWords[word]) {
+                other.bagOfWords[word] = 0
+            }
+            thisSize += count*count
+        }
+
+        other.bagOfWords.each { String word, int count ->
+            if (!this.bagOfWords[word]) {
+                this.bagOfWords[word] = 0
+            }
+            otherSize += count*count
+        }
+
+        this.bagOfWords.each { String word, int count ->
+            scalar += count * other.bagOfWords[word]
+        }
+
+        return scalar / (thisSize * otherSize)
     }
 }
