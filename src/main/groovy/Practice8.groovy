@@ -1,9 +1,11 @@
+import groovy.transform.ToString
+
 /**
  * @author yaroslav.yermilov
  */
 Random RANDOM = new Random()
 
-int COUNT = 100
+int COUNT = 50
 
 
 List booksPaths = getBooksPaths(COUNT)
@@ -30,7 +32,7 @@ books.each { book ->
 clusters.each { cluster ->
     println ("=" * 20)
     cluster.each { book ->
-        println book
+        println book.path
     }
     println ("=" * 20)
 }
@@ -56,17 +58,31 @@ List getBooksPaths(int count) {
     return result
 }
 
+@ToString
 class Book {
 
     String path
     Map bagOfWords
 
     static Book loadFrom(String path) {
-        return new Book(path: path)
+        Map bagOfWords = [:]
+        List words = new File(path).text
+                                    .split()
+                                    .collect {
+                                        it.toLowerCase().replaceAll('<p>', '').replaceAll('</p>', '')
+                                    }
+                                    .grep {
+                                        !it.isEmpty() && !it.startsWith('<') && !it.endsWith('>') && it.length() < 20
+                                    }
+                                    .each {
+                                        bagOfWords[it] = ((bagOfWords[it]?:0) + 1) as int
+                                    }
+
+        return new Book(path: path, bagOfWords: bagOfWords)
     }
 
     double distanceTo(Book other) {
-        def thisSize = 0, otherSize = 0, scalar = 0
+        double thisSize = 0, otherSize = 0, scalar = 0
 
         this.bagOfWords.each { String word, int count ->
             if (!other.bagOfWords[word]) {
@@ -86,6 +102,6 @@ class Book {
             scalar += count * other.bagOfWords[word]
         }
 
-        return scalar / (thisSize * otherSize)
+        return scalar / Math.sqrt(thisSize * otherSize)
     }
 }
